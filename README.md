@@ -114,3 +114,18 @@ Public portfolio documents omit student identification numbers and other team me
 - Stronger model evaluation across diverse student language patterns
 - Automated testing and continuous integration
 - Enhanced accessibility and privacy controls
+
+
+## Application Screenshots
+
+### Wellness Dashboard
+![Wellness Dashboard](assets/wellness-dashboard.jpg)
+
+### Emotion Analysis
+![Emotion Analysis](assets/emotion-analysis.jpg)
+
+### Reports Dashboard
+![Reports Dashboard](assets/reports-dashboard.jpg)
+
+### Login Page
+![Login Page](assets/login-page.jpg)
