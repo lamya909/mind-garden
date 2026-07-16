@@ -1,0 +1,42 @@
+{% extends 'base.html' %} {% block title %}Mind Garden | AI Wellness{% endblock
+%} {% block content %}
+<section class="hero-card p-4 p-md-5 p-lg-6 rounded-4">
+  <span class="hero-highlight mb-3">● Trusted by student communities</span>
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-bold lh-sm mb-3">
+        A professional AI wellness space for university life
+      </h1>
+      <p class="lead text-body-secondary mb-4">
+        Capture your daily emotions, get instant evidence-based guidance, and
+        monitor mental wellness trends with clear analytics.
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        <a
+          href="{{ url_for('auth.register') }}"
+          class="btn btn-primary btn-lg px-4"
+          >Get started</a
+        >
+        <a
+          href="{{ url_for('auth.login') }}"
+          class="btn btn-outline-primary btn-lg px-4"
+          >Sign in</a
+        >
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="surface-muted p-4 h-100">
+        <h2 class="h6 text-uppercase text-body-secondary">
+          Platform Highlights
+        </h2>
+        <ul class="mb-0 ps-3 small">
+          <li class="mb-2">NLP emotion detection with confidence scoring</li>
+          <li class="mb-2">Personalized wellness recommendations</li>
+          <li class="mb-2">Weekly and monthly visual reports</li>
+          <li>Admin-ready controls for student support teams</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends 'base.html' %} {% block title %}Dashboard | Mind Garden{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h1 class="h3 mb-1">Wellness Dashboard</h1>
+  <p class="text-body-secondary mb-0">
+    Track daily emotions and receive personalized support in real time.
+  </p>
+</div>
+
+{% if alert_message %}
+<div class="alert alert-warning border-0 shadow-sm">
+  <strong>Smart Alert:</strong> {{ alert_message }}
+</div>
+{% endif %} {% if active_alerts %}
+<div class="card border-warning mb-4">
+  <div class="card-body py-3">
+    <h2 class="h6 mb-2">Active Alerts</h2>
+    <ul class="mb-0 small">
+      {% for alert in active_alerts %}
+      <li>
+        {{ alert.message }}
+        <span class="text-body-secondary"
+          >({{ alert.created_at.strftime('%Y-%m-%d %H:%M') }})</span
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5 card-title">Daily Emotional Journal</h2>
+        <p class="text-body-secondary small">
+          Write freely. Emojis are welcome 😊
+        </p>
+        <form method="post">
+          <div class="mb-3">
+            <textarea
+              class="form-control"
+              name="text"
+              rows="6"
+              placeholder="How are you feeling today?"
+              required
+            ></textarea>
+          </div>
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="anonymous"
+              name="is_anonymous"
+            />
+            <label class="form-check-label" for="anonymous"
+              >Save this entry anonymously</label
+            >
+          </div>
+          <button class="btn btn-primary px-4" type="submit">
+            Analyze emotion
+          </button>
+        </form>
+
+        {% if detected %}
+        <hr class="my-4" />
+        <div class="alert alert-info mb-2">
+          <strong>Detected emotion:</strong> {{ detected.label|capitalize }}
+          (confidence {{ '%.2f'|format(detected.confidence) }})
+        </div>
+        <div class="mb-2 small">
+          <strong>Detected dimensions:</strong>
+          {% for item in detected.emotions %}
+          <span class="badge text-bg-light border me-1"
+            >{{ item.label }} {{ '%.2f'|format(item.score) }}</span
+          >
+          {% endfor %}
+        </div>
+        <div class="mb-3 small text-body-secondary">
+          <strong>Keywords:</strong> {{ detected.keywords|join(', ') if
+          detected.keywords else 'n/a' }}
+        </div>
+        <div class="mb-3 small text-body-secondary">
+          <strong>Why this emotion:</strong>
+          {{ detected.explainability.summary if detected.explainability else
+          'Detected from overall language pattern.' }}
+        </div>
+        <div class="mb-3 small">
+          <strong>Risk Signal:</strong>
+          {% if detected.risk and detected.risk.level == 'high' %}
+          <span class="badge text-bg-danger"
+            >High ({{ '%.2f'|format(detected.risk.score) }})</span
+          >
+          {% elif detected.risk and detected.risk.level == 'moderate' %}
+          <span class="badge text-bg-warning"
+            >Moderate ({{ '%.2f'|format(detected.risk.score) }})</span
+          >
+          {% else %}
+          <span class="badge text-bg-success"
+            >Low ({{ '%.2f'|format(detected.risk.score if detected.risk else 0)
+            }})</span
+          >
+          {% endif %}
+        </div>
+        <div class="p-3 surface-muted">
+          <strong>Smart recommendations:</strong>
+          <ul class="mb-0 mt-2">
+            {% for rec in recommendation_items %}
+            <li>{{ rec.text }}</li>
+            {% else %}
+            <li>Take a mindful break and hydrate.</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h3 class="h6 card-title">Recent Entries</h3>
+        {% if posts %}
+        <ul class="list-group list-group-flush">
+          {% for post in posts %}
+          <li class="list-group-item px-0">
+            <div class="small text-body-secondary">
+              {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}
+            </div>
+            <div>
+              {{ post.text[:90] }}{% if post.text|length > 90 %}...{% endif %}
+            </div>
+            {% if post.emotion_result %}
+            <span class="badge text-bg-secondary mt-1"
+              >{{ post.emotion_result.emotion_label }}</span
+            >
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-body-secondary mb-0">No journal entries yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h3 class="h6 card-title">30-day Emotion Trend</h3>
+        {% if trend_meta and trend_meta.personalized_baseline %}
+        <div class="small text-body-secondary mb-2">
+          Personalized baseline: mean {{
+          '%.2f'|format(trend_meta.personalized_baseline.mean) }} | dynamic
+          threshold {{
+          '%.2f'|format(trend_meta.personalized_baseline.dynamic_threshold) }} |
+          shift {{ '%.2f'|format(trend_meta.baseline_shift) }}
+        </div>
+        {% endif %}
+        <div class="chart-box">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  const trendData = {{ chart_data|tojson }};
+  const labels = trendData.labels || [];
+  const colors = ['#0d6efd', '#198754', '#dc3545', '#fd7e14', '#6f42c1', '#20c997', '#6c757d'];
+  const datasets = (trendData.datasets || []).map((item, index) => ({
+    label: item.label,
+    data: item.data,
+    borderColor: colors[index % colors.length],
+    backgroundColor: colors[index % colors.length] + '22',
+    fill: false,
+    borderWidth: 2,
+    tension: 0.3,
+    spanGaps: true
+  }));
+
+  new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+          labels,
+      datasets
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true } }
+      }
+  });
+</script>
+{% endblock %}

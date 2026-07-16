@@ -1,0 +1,41 @@
+{% extends 'base.html' %} {% block title %}Login | Mind Garden{% endblock %} {%
+block content %}
+<section class="auth-shell">
+  <div class="row justify-content-center w-100">
+    <div class="col-md-7 col-lg-5">
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <div class="mb-4">
+            <h1 class="h3 mb-1">Welcome back</h1>
+            <p class="text-body-secondary mb-0">
+              Sign in to access your Mind Garden dashboard.
+            </p>
+          </div>
+          <form method="post" class="d-grid gap-3">
+            <div>
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required />
+            </div>
+            <div>
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                required
+              />
+            </div>
+            <button class="btn btn-primary w-100 py-2" type="submit">
+              Sign in
+            </button>
+          </form>
+          <p class="small mt-4 mb-0 text-body-secondary">
+            New here?
+            <a href="{{ url_for('auth.register') }}">Create your account</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

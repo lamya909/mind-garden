@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block title %}Edit Recommendation | Mind Garden{%
+endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-3">Edit Recommendation</h1>
+        <form method="post" class="d-grid gap-3">
+          <div class="mb-3">
+            <label class="form-label">Emotion label</label>
+            <input
+              class="form-control"
+              name="emotion_label"
+              value="{{ item.emotion_label }}"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Recommendation text</label>
+            <textarea
+              class="form-control"
+              name="recommendation_text"
+              rows="5"
+              required
+            >
+{{ item.recommendation_text }}</textarea
+            >
+          </div>
+          <button class="btn btn-primary">Save changes</button>
+          <a
+            class="btn btn-outline-secondary"
+            href="{{ url_for('admin.recommendations') }}"
+            >Cancel</a
+          >
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

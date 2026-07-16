@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block title %}Register | Mind Garden{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="row justify-content-center w-100">
+    <div class="col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <div class="mb-4">
+            <h1 class="h3 mb-1">Create your account</h1>
+            <p class="text-body-secondary mb-0">
+              Start your AI-assisted emotional wellness journey.
+            </p>
+          </div>
+          <form method="post" class="d-grid gap-3">
+            <div>
+              <label class="form-label">Full name</label>
+              <input type="text" name="name" class="form-control" required />
+            </div>
+            <div>
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required />
+            </div>
+            <div>
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                minlength="8"
+                required
+              />
+            </div>
+            <button class="btn btn-primary w-100 py-2" type="submit">
+              Create account
+            </button>
+          </form>
+          <p class="small mt-4 mb-0 text-body-secondary">
+            Already registered?
+            <a href="{{ url_for('auth.login') }}">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
